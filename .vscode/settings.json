@@ -1,0 +1,12 @@
+{
+	"emeraldwalk.runonsave": {
+    "commands": [
+			{
+					"match": "\\.py$",
+					"isAsync": true,
+					"cmd": "powershell ./copy.ps1"
+			}
+    ]
+},
+"python.linting.pylintEnabled": false
+}
