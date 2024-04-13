@@ -4,7 +4,7 @@ import thunder.input as controls
 import thunder.utils as u
 
 from thunder.display import Display
-import displayio, terminalio
+import terminalio
 from adafruit_display_text import label
 from adafruit_display_shapes.triangle import Triangle
 
@@ -134,11 +134,10 @@ def play(file):
   program.display=disp
   program.controls=controls
   program.led=led
-  program.boot_btns=[]
   program.main()
 
 boot = json.loads(io.open('/cyclone/cyclone.json', 'r').read())['auto_boot']
-if boot != "0":
+if boot != "0" and controls.get_btn(controls.btnb) == False:
   location = 'cyclone.'+boot
   play(location)
 

@@ -4,7 +4,6 @@ import board, time
 display = None
 controls = None
 led = None
-boot_btns = []
 
 def main():
 	tone = PWMOut(board.GP14, variable_frequency=True)

@@ -12,11 +12,9 @@ controls = None
 
 led = None
 
-boot_btns = []
-
 # Init display
 screen = None
-chunksize = 8
+chunksize = 11
 
 # Init Audio
 # 0-speaker, 1-wired
@@ -294,8 +292,6 @@ def main():
   screen.append(pointer)
   screen.append(modal)
   screen.append(playing)
-  if controls.btnst in boot_btns:
-    annoy()
   draw_modal()
   global played_now, play_order, start_timer, screen_on_dur, files, chunk, poy, audio, next_song
   while True:
