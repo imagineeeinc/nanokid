@@ -1,19 +1,26 @@
-import board, time, os, io, gc
+import board, time, os, io, gc, supervisor
 import displayio, terminalio
 from adafruit_display_text import label
 
 from audiocore import WaveFile
 from audiopwmio import PWMAudioOut as AudioOut
+from digitalio import DigitalInOut, Direction, Pull
 
+from thunder.display import Display
+from thunder.mount_sd import init_sdcard
+import thunder.input as controls
 import thunder.utils as u
 
-display = None
-controls = None
+init_sdcard()
 
-led = None
+display = Display()
+
+led = DigitalInOut(board.LED)
+led.direction = Direction.OUTPUT
+led.value = False
 
 # Init display
-screen = None
+screen = display.screen
 chunksize = 11
 
 # Init Audio
@@ -167,14 +174,6 @@ def parse_path(cur, next):
     stack.append(next[:len(next)-1])
   return "/".join(stack)+"/"
 
-
-# chunkify
-def divide_chunks(l, n):
-  list=[]
-  for i in range(0, len(l), n): 
-    x = i
-    list.append(l[x:x+n]) 
-  return list
 # read list of files
 def read_files():
   inlist = os.listdir(root+path)
@@ -284,8 +283,6 @@ def to_dir(loc):
   time.sleep(0.2)
 
 def main():
-  global screen
-  screen = display.screen
   screen.append(play_btn)
   screen.append(play_order_btn)
   screen.append(audio_out_btn)
@@ -340,6 +337,8 @@ def main():
       start_timer = time.monotonic()
     elif controls.get_btn(controls.btnb):
       if display.backlight.value == True:
+        if controls.get_btn(controls.btnse):
+          supervisor.reload()
         to_dir("../")
       else:
         display.backlight_on()
@@ -369,3 +368,5 @@ def main():
       display.backlight_off()
       led.value = True
     gc.collect()
+
+main()

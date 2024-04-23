@@ -1,4 +1,4 @@
-import board, time, os, io, gc, sys, json
+import board, time, os, io, gc, sys, json, supervisor
 from thunder.mount_sd import init_sdcard
 import thunder.input as controls
 import thunder.utils as u
@@ -13,6 +13,12 @@ from digitalio import DigitalInOut, Direction, Pull
 led = DigitalInOut(board.LED)
 led.direction = Direction.OUTPUT
 led.value = False
+
+boot = json.loads(io.open('/cyclone/cyclone.json', 'r').read())['auto_boot']
+if boot != "0" and controls.get_btn(controls.btnb) == False:
+  location = '/cyclone/'+boot+'.py'
+  supervisor.set_next_code_file(location)
+  supervisor.reload()
 
 # Init SD card
 init_sdcard()
@@ -122,39 +128,19 @@ def draw():
   draw_pointer()
   gc.collect()
 
-def play(file):
-  screen.pop(1)
-  screen.pop(0)
-  time.sleep(0.2)
-  gc.collect()
-  global modal, pointer, files
-  del modal, pointer, files
-  __import__(file)
-  program = sys.modules[file]
-  program.display=disp
-  program.controls=controls
-  program.led=led
-  program.main()
-
-boot = json.loads(io.open('/cyclone/cyclone.json', 'r').read())['auto_boot']
-if boot != "0" and controls.get_btn(controls.btnb) == False:
-  location = 'cyclone.'+boot
-  play(location)
-
 draw_modal()
 while True:
   draw()
   if controls.get_btn(controls.btna):
     if menu_mode == False:
       location = root+path+files[chunk][poy]
-      location = location.replace("/", ".")
-      location = location[1:len(location)-3]
-      play(location)
+      supervisor.set_next_code_file(location)
+      supervisor.reload()
       break
     else:
       if menu[poy][1] == "chr":
         break
-  elif controls.get_btn(controls.btnst):
+  elif controls.get_btn(controls.btnse):
     menu_mode = not menu_mode
     draw_modal()
     time.sleep(0.5)

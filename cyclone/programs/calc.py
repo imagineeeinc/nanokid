@@ -3,15 +3,25 @@ import displayio, terminalio
 from adafruit_display_text import label
 from adafruit_display_shapes.triangle import Triangle
 
-display = None
-controls = None
-led = None
+from digitalio import DigitalInOut, Direction, Pull
+
+from thunder.display import Display
+from thunder.mount_sd import init_sdcard
+import thunder.input as controls
+
+init_sdcard()
+
+display = Display()
+
+led = DigitalInOut(board.LED)
+led.direction = Direction.OUTPUT
+led.value = False
 
 def calc(txt, cur, m):
   last=""
   left = ""
   for n in txt:
-    if n in "01234567890+-*/":
+    if n in "01234567890+-*/.":
       left += n
     if n == "M":
       left += str(m)
@@ -25,9 +35,10 @@ def main():
     ["7", "8", "9", ">c", "Ans", "M", ">m", ">M"],
     ["4", "5", "6", "*", "/", "^", "sq", "root"],
     ["1", "2", "3", "+", "-", "sin", "cos", "tan"],
-    ["0", ".", "(", ")", ">=", "^2", ",", "log"]
+    ["0", ".", "(", ")", ">=", "^2", ",", "log"],
+    ["", "", "", "", "e", "pi", "", ""]
   ]
-  btn = label.Label(terminalio.FONT, text="7 8 9 C A M  =M M+\n4 5 6 * / ^  sq _ro\n1 2 3 + - si co ta\n0 . ( ) = ^2 ,  log",
+  btn = label.Label(terminalio.FONT, text="7 8 9 C A M  =M M+\n4 5 6 * / ^  sq _ro\n1 2 3 + - si co ta\n0 . ( ) = ^2 ,  log\n        e pi",
   color=0xFFFFFF, background_color=0x000000, x=10, y=80, scale = 2)
   display.screen.append(btn)           
   preview = label.Label(terminalio.FONT, text="",
@@ -54,8 +65,8 @@ def main():
     # Update
     if controls.get_axis(controls.y_axis) > 0.2:
       poy+=1
-      if poy >= 3:
-        poy = 3
+      if poy >= 4:
+        poy = 4
     elif controls.get_axis(controls.y_axis) < -0.2:
       poy-=1
       if poy <= 0:
@@ -86,6 +97,12 @@ def main():
       cur_val.text = str(cur_res)
       last_val.text = str(last_res)
       time.sleep(0.1)
+    if controls.get_btn(controls.btnse):
+      last_res = cur_res
+      cur_res = calc(buffer, cur_res, m)
+      preview.text = buffer
+      cur_val.text = str(cur_res)
+      last_val.text = str(last_res)
     if controls.get_btn(controls.btnb):
       buffer = buffer[:len(buffer)-1]
       preview.text = buffer
@@ -97,3 +114,5 @@ def main():
     else:
       pointer.x = 156+(pox-6)*36
     time.sleep(0.1)
+
+main()
