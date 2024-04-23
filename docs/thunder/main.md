@@ -18,3 +18,7 @@ All of the submodules can be accessed under the name `thunder` (e.g.: `from thun
   - [`mpu6050`](./mpu6050)
   - utils
   - [`wifi`](./wifi)
+
+## Installation
+### Manual
+Simply copy the `thunder/` folder from the root of the project to the `lib/` folder on the NanoKid's storage. And you are ready to access all of the thunder API with the `thunder` prefix.
