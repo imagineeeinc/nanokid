@@ -10,14 +10,11 @@ from thunder.display import Display
 from thunder.mount_sd import init_sdcard
 import thunder.input as controls
 import thunder.utils as u
+from thunder.led import led
 
 init_sdcard()
 
 display = Display()
-
-led = DigitalInOut(board.LED)
-led.direction = Direction.OUTPUT
-led.value = False
 
 # Init display
 screen = display.screen
@@ -36,26 +33,26 @@ audio = init_speaker(output)
 decoder = None
 
 # images
-play_btn_image = displayio.OnDiskBitmap("/play.bmp")
-pause_btn_image = displayio.OnDiskBitmap("/pause.bmp")
+play_btn_image = displayio.OnDiskBitmap("/cyclone/musicplayer/play.bmp")
+pause_btn_image = displayio.OnDiskBitmap("/cyclone/musicplayer/pause.bmp")
 play_btn = displayio.TileGrid(play_btn_image, pixel_shader=play_btn_image.pixel_shader, x=8, y=200)
 
 play_order_image = [
-  displayio.OnDiskBitmap("/no-order.bmp"),
-  displayio.OnDiskBitmap("/play-in-order.bmp"),
-  displayio.OnDiskBitmap("/repeat-list.bmp"),
-  displayio.OnDiskBitmap("/shuffle.bmp"),
-  displayio.OnDiskBitmap("/repeat.bmp")
+  displayio.OnDiskBitmap("/cyclone/musicplayer/no-order.bmp"),
+  displayio.OnDiskBitmap("/cyclone/musicplayer/play-in-order.bmp"),
+  displayio.OnDiskBitmap("/cyclone/musicplayer/repeat-list.bmp"),
+  displayio.OnDiskBitmap("/cyclone/musicplayer/shuffle.bmp"),
+  displayio.OnDiskBitmap("/cyclone/musicplayer/repeat.bmp")
 ]
 play_order_btn = displayio.TileGrid(play_order_image[1], pixel_shader=play_order_image[0].pixel_shader, x=8+38, y=216)
 
-speaker_image = displayio.OnDiskBitmap("/speaker.bmp")
-wired_image = displayio.OnDiskBitmap("/wired.bmp")
+speaker_image = displayio.OnDiskBitmap("/cyclone/musicplayer/speaker.bmp")
+wired_image = displayio.OnDiskBitmap("/cyclone/musicplayer/wired.bmp")
 audio_out_btn = displayio.TileGrid(speaker_image, pixel_shader=speaker_image.pixel_shader, x=8+38+20, y=216)
 
 pointer_y = 2
 pointer_jump = 15
-pointer_image = displayio.OnDiskBitmap("/pointer.bmp")
+pointer_image = displayio.OnDiskBitmap("/cyclone/musicplayer/pointer.bmp")
 pointer = displayio.TileGrid(pointer_image, pixel_shader=pointer_image.pixel_shader, x=0, y=pointer_y)
 
 # Text box
