@@ -3,21 +3,21 @@ This document encloses some hardware information.
 
 ## Components
 - **Computing Unit**
-  - Rasspberry Pi Pico W
+  - Raspberry Pi Pico W
     - Uses the **RP2040 mcu**
-    - Built in Wifi And Bluetooh
-    - USB Mico Port
+    - Built in Wifi And Bluetooth
+    - MicroUSB Port
 - **Display**
   - ST7789 LCD
     - 1.3 Inch
     - **240x240 Resolution**
     - Full Colour
-- **Accelorometer & Gyroscope**
+- **Accelerometer & Gyroscope**
   - MPU6050
-    - Accelorometer
+    - Accelerometer
     - Gyroscope
     - Temperature
-    - Movement Interupt
+    - Movement Interrupt
 
 ## I2C Addresses
 - MPU:

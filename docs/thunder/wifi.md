@@ -45,7 +45,7 @@ The main object used to abstract the Wifi for usage.
 
 ## Setting up safe Wifi connections
 1. Create a `settings.toml` in the root of your devices storage, if it doesn't exist yet. The root is the immediate storage you access after opening the drive on file explorer.
-2. Open the `settings.toml` file in a text editor, like notepad or preferrd text editor.
+2. Open the `settings.toml` file in a text editor, like notepad or preferred text editor.
 3. Put in the text that is bellow:
 	```toml
 	WIFI_SSID="<ssid>"

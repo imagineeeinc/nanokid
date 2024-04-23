@@ -40,7 +40,7 @@ class Display(mosi=board.GP19, clk=board.GP18, cs=board.GP17, dc=board.GP16, sca
   - `dc: board.GP16`: dc line for the display, used if its on another pin.
   - `scale: 1`: the scale of the root display group; leave as is if you don't know what to do.
 - Properties
-  - `power`: creates a [`DigitalInOut`](https://docs.circuitpython.org/en/latest/shared-bindings/digitalio/index.html#digitalio.DigitalInOut) from the [`digitalio`](https://docs.circuitpython.org/en/latest/shared-bindings/digitalio/index.html#module-digitalio). Is used to programmatically turn on the display when the display is inited to save battery power. When `power.value` is `True` the display is on, and vice versa.
+  - `power`: creates a [`DigitalInOut`](https://docs.circuitpython.org/en/latest/shared-bindings/digitalio/index.html#digitalio.DigitalInOut) from the [`digitalio`](https://docs.circuitpython.org/en/latest/shared-bindings/digitalio/index.html#module-digitalio). Is used to programmatically turn on the display when the display is initiated to save battery power. When `power.value` is `True` the display is on, and vice versa.
   - `backlight`: creates a [`DigitalInOut`](https://docs.circuitpython.org/en/latest/shared-bindings/digitalio/index.html#digitalio.DigitalInOut) from the [`digitalio`](https://docs.circuitpython.org/en/latest/shared-bindings/digitalio/index.html#module-digitalio). Used to turn of the backlight when you want to be in standby but don't want to waste power to keep the backlight on. When `backlight.value` is `False` the backlight is off, and vice versa.
   - `scale`: stores the current screen's scale.
   - `display`: create a display driver from [`adafruit_ST7789`](https://docs.circuitpython.org/projects/st7789/en/latest/api.html#adafruit-st7789).
@@ -84,3 +84,5 @@ disp.screen.append(text)
 while True:
   pass
 ```
+#### Custom Font
+To learn more on how to use custom font read more on the [circuit python guides on using and converting custom fonts](https://learn.adafruit.com/custom-fonts-for-pyportal-circuitpython-display/overview).

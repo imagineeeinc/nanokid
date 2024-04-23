@@ -9,9 +9,9 @@ All of the submodules can be accessed under the name `thunder` (e.g.: `from thun
 - `thunder`
   - audio
   - [`display`](./display)
-  - input
+  - [`input`](./input)
   - IR
-  - led
+  - [`led`](./led)
   - light sensor
   - microphone
   - [`mount_sd`](./mount_sd)

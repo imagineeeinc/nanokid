@@ -12,6 +12,7 @@ The microSD Card **MUST be under 32GB** in capacity. And should be formatted to 
 1. Connect the microSD card to your device and make sure it is properly formatted according to the [formatting guidelines](#formatting)
 2. Load a file onto the microSD card using your device; in this example it's a file called `hello.txt`.
 3. Take the microSD card out of your device and plug it into the back of the NanoKid, **make sure it is powered off or no code is running**.
+4. Make a `sd/` folder in the root of the **NanoKid**, **Not the SD card**.
 ```python
 from thunder.mount_sd import init_sdcard
 import io
@@ -33,6 +34,8 @@ print(io.open("/sd/hello.txt", mode="r").read())
 
 ### `def init_sdcard`
 Initialises the microSD card and mounts it to the [mount location](#mount) (default is `/sd`).
+
+> Note: Make sure to create a folder on the root of the **NanoKid** with corresponding folder name. If you will use the default call it `sd/`
 
 ### `mount`
 `Default: '/sd'`
