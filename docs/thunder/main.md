@@ -8,16 +8,16 @@ All of the submodules can be accessed under the name `thunder` (e.g.: `from thun
 ## API Reference
 - `thunder`
   - audio
-  - [`display`](./display)
-  - [`input`](./input)
+  - [`display`](./display.md)
+  - [`input`](./input.md)
   - IR
-  - [`led`](./led)
+  - [`led`](./led.md)
   - light sensor
   - microphone
-  - [`mount_sd`](./mount_sd)
-  - [`mpu6050`](./mpu6050)
+  - [`mount_sd`](./mount_sd.md)
+  - [`mpu6050`](./mpu6050.md)
   - utils
-  - [`wifi`](./wifi)
+  - [`wifi`](./wifi.md)
 
 ## Installation
 ### Manual
