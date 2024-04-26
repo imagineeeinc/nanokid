@@ -16,6 +16,7 @@ All of the submodules can be accessed under the name `thunder` (e.g.: `from thun
   - microphone
   - [`mount_sd`](./mount_sd.md)
   - [`mpu6050`](./mpu6050.md)
+  - sys
   - utils
   - [`wifi`](./wifi.md)
 
