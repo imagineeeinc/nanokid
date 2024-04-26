@@ -129,6 +129,7 @@ def draw():
   gc.collect()
 
 draw_modal()
+time.sleep(0.5)
 while True:
   draw()
   if controls.get_btn(controls.btna):
