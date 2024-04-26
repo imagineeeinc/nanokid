@@ -1,4 +1,5 @@
-import board, time, os, io, gc, supervisor
+# A featureful wav player
+import board, time, os, io, gc
 import displayio, terminalio
 from adafruit_display_text import label
 
@@ -11,6 +12,7 @@ from thunder.mount_sd import init_sdcard
 import thunder.input as controls
 import thunder.utils as u
 from thunder.led import led
+import thunder.sys as sys
 
 init_sdcard()
 
@@ -137,12 +139,12 @@ def play(filename, name):
         time.sleep(0.2)
       start_timer = time.monotonic()
     else:
-      if controls.get_axis(controls.x_axis) < -0.4:
+      if controls.get_axis(controls.x_axis) < -0.9:
         next_song = -1
         audio.stop()
         file.close()
         time.sleep(0.2)
-      if controls.get_axis(controls.x_axis) > 0.4:
+      if controls.get_axis(controls.x_axis) > 0.8:
         next_song = 1
         audio.stop()
         file.close()
@@ -335,7 +337,7 @@ def main():
     elif controls.get_btn(controls.btnb):
       if display.backlight.value == True:
         if controls.get_btn(controls.btnse):
-          supervisor.reload()
+          sys.exit_to_shell()
         to_dir("../")
       else:
         display.backlight_on()

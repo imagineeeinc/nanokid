@@ -1,4 +1,4 @@
-
+# A nice handheld clock with time of currewnt location and weather
 # Make sure to have the space mono font converted to pcf format with 24 pt size and located at the root of the sdcard (file name: 'spacemono24.pcf')
 # ttf2bdf: https://learn.adafruit.com/custom-fonts-for-pyportal-circuitpython-display/use-otf2bdf
 # convert to pcf for faster loads: https://learn.adafruit.com/custom-fonts-for-pyportal-circuitpython-display/convert-to-pcf
@@ -28,10 +28,8 @@ def get_time():
   response = wifi.fetch(url)
   if not hasattr(response, "json"):
     print(f"Failed to fetch:\n{response}")
-    # l.log(f"Failed to fetch time: {response}")
     return
   print("Response recieved for current time")
-  # l.log("Time recived")
 
   json = response.json()
   unixtime = json["unixtime"]
@@ -43,7 +41,6 @@ def get_time():
   global clock
   clock = rtc.RTC()
   clock.datetime = time.struct_time(current_time)
-  # l.log(f"Time set")
 
 global temp
 global weather
@@ -54,10 +51,8 @@ def get_weather():
   response = wifi.fetch(url)
   if not hasattr(response, "json"):
     print(f"Failed to fetch:\n{response}")
-    # l.log(f"Failed to fetch location: {response}")
     return
   print("Response recieved for location")
-  # l.log("Location recived")
 
   json = response.json()
   lat = json["lat"]
@@ -68,10 +63,8 @@ def get_weather():
   response = wifi.fetch(url)
   if not hasattr(response, "json"):
     print(f"Failed to fetch:\n{response}")
-    # l.log(f"Failed to fetch weather: {response}")
     return
   print("Response recieved for weather")
-  # l.log("Weather recived")
 
   json = response.json()
   global temp
@@ -80,7 +73,6 @@ def get_weather():
   temp = int(json["main"]["temp"])
   weather = json["weather"][0]["main"]
   wind = json["wind"]["speed"]#m/s
-  # l.log("Weather set")
 
 get_time()
 gc.collect()
@@ -98,7 +90,6 @@ led.value = False
 import displayio
 from thunder.display import Display
 from adafruit_bitmap_font import bitmap_font
-#import terminalio
 from adafruit_display_text import label
 
 # Display Setup
@@ -137,7 +128,6 @@ def draw_time():
   date_box.text = f"{days[clock.datetime.tm_wday]} {clock.datetime.tm_mday:02d}/{clock.datetime.tm_mon:02d}"
   temp_box.text = f"{temp:02d}C {wind}m/s\n{weather}"
 def draw():
-  #if len(screen) > 1:del screen[1]
   global seconds_pass
   seconds_pass = clock.datetime.tm_sec
   if seconds_pass >= 0 and seconds_pass <= 1:
@@ -145,7 +135,6 @@ def draw():
   seconds_box.text = f"{clock.datetime.tm_sec:02d}"
 
 print("Drawing")
-# l.log("Drawing started")
 draw_time()
 
 def mem_free():

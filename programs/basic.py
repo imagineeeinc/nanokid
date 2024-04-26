@@ -1,3 +1,4 @@
+# A custom basic interpreter
 import re, time, board, usb_cdc
 import terminalio
 from adafruit_display_text import label
@@ -21,6 +22,7 @@ term = label.Label(terminalio.FONT, text="",
 color=0xFFFFFF, background_color=0x000000, x=0, y=5)
 
 code = OrderedDict()
+var = {}
 
 s = usb_cdc.console
 
@@ -41,12 +43,19 @@ def parse(tree):
     i = tree[n]
     if i == "print":
       del tree[0]
-      string = " ".join(tree)
-      print(string)
+      if tree[0][0] == "$":
+        print(var[tree[0]])
+      else:
+        string = " ".join(tree)
+        print(string)
       break
     if i == "echo":
       del tree[0]
-      string = " ".join(tree)
+      string = ""
+      if tree[0][0] == "$":
+        string = var[tree[0]]
+      else:
+        string = " ".join(tree)
       string = u.divide_chunks(string, 40)
       for i in string:
         term.text += i+"\n"
@@ -99,6 +108,10 @@ def parse(tree):
       del tree[0]
       code[i] = " ".join(tree)
       break
+    elif i[0] == "$" and tree[1] == "=":
+      del tree[0]
+      del tree[0]
+      var[i] = " ".join(tree)
     n+=1
   return val
 def main():

@@ -1,3 +1,4 @@
+# prints the mcu uid
 import microcontroller as mcu
 uid = ""
 for i in mcu.cpu.uid:

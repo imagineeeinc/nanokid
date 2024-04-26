@@ -1,3 +1,4 @@
+# A scientific calculator
 import board, time
 import displayio, terminalio
 from adafruit_display_text import label

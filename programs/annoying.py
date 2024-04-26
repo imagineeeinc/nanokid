@@ -1,3 +1,6 @@
+# A highpitched noise generator
+# a:increase volume b:decrease volume
+# up: lower pitch down:higher pitch
 from pwmio import PWMOut
 import board, time
 
