@@ -58,9 +58,6 @@ def read_files():
     if not (text.endswith(".py")) :
       outlist.pop(i-shift)
       shift += 1
-    elif text == "__init__.py" :
-      outlist.pop(i-shift)
-      shift += 1
   return u.divide_chunks(outlist, chunksize)
 
 # files

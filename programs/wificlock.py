@@ -13,6 +13,7 @@ from thunder.mount_sd import init_sdcard
 from thunder.wifi import Wifi
 import circuitpython_schedule as schedule
 
+led.value = True
 init_sdcard()
 
 # Setup wifi
