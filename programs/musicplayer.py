@@ -1,5 +1,7 @@
 # A featureful wav player
-import board, time, os, io, gc
+# Folder traversal, shuffling changing play order, mono wav playback to speaker or 3.5mm
+# Cover image per folder support, simply put the cover for the folder in 80x80 bmp format called 'cover80.bmp'
+import board, time, os, io, gc, random
 import displayio, terminalio
 from adafruit_display_text import label
 
@@ -20,7 +22,7 @@ display = Display()
 
 # Init display
 screen = display.screen
-chunksize = 11
+chunksize = 10
 
 # Init Audio
 # 0-speaker, 1-wired
@@ -30,7 +32,6 @@ def init_speaker(out):
     return AudioOut(board.GP14)
   elif out == 1:
     return AudioOut(board.GP15)
-#wired = AudioOut(board.GP15)
 audio = init_speaker(output)
 decoder = None
 
@@ -43,7 +44,6 @@ play_order_image = [
   displayio.OnDiskBitmap("/cyclone/musicplayer/no-order.bmp"),
   displayio.OnDiskBitmap("/cyclone/musicplayer/play-in-order.bmp"),
   displayio.OnDiskBitmap("/cyclone/musicplayer/repeat-list.bmp"),
-  displayio.OnDiskBitmap("/cyclone/musicplayer/shuffle.bmp"),
   displayio.OnDiskBitmap("/cyclone/musicplayer/repeat.bmp")
 ]
 play_order_btn = displayio.TileGrid(play_order_image[1], pixel_shader=play_order_image[0].pixel_shader, x=8+38, y=216)
@@ -51,6 +51,10 @@ play_order_btn = displayio.TileGrid(play_order_image[1], pixel_shader=play_order
 speaker_image = displayio.OnDiskBitmap("/cyclone/musicplayer/speaker.bmp")
 wired_image = displayio.OnDiskBitmap("/cyclone/musicplayer/wired.bmp")
 audio_out_btn = displayio.TileGrid(speaker_image, pixel_shader=speaker_image.pixel_shader, x=8+38+20, y=216)
+
+no_shuffle = displayio.OnDiskBitmap("/cyclone/musicplayer/no-shuffle.bmp")
+yes_shuffle = displayio.OnDiskBitmap("/cyclone/musicplayer/shuffle.bmp")
+shuffle_btn = displayio.TileGrid(no_shuffle, pixel_shader=no_shuffle.pixel_shader, x=8+38+2*20, y=216)
 
 pointer_y = 2
 pointer_jump = 15
@@ -61,10 +65,15 @@ pointer = displayio.TileGrid(pointer_image, pixel_shader=pointer_image.pixel_sha
 modal = label.Label(terminalio.FONT, text="",
 color=0xc7dcd0, x=10, y=5)
 
-
 default_notplaying = "..."
 playing = label.Label(terminalio.FONT, text=default_notplaying,
 color=0xdefaea, x=5, y=180, scale=2)
+dur = label.Label(terminalio.FONT, text="00:00",
+color=0xc7dcd0, x=47, y=205)
+
+default_cover = displayio.Bitmap(80,80,1)
+cover = default_cover
+cover_pre = displayio.TileGrid(cover, pixel_shader=pointer_image.pixel_shader, x=240-80, y=240-80)
 
 # Timer
 start_timer = time.monotonic()
@@ -72,28 +81,36 @@ start_timer = time.monotonic()
 # playing settings
 lastplayed = ""
 played_now = False
-# 0-no, 1-chronology, 2-repeat list, 3-shuffle, 4-replay
+# 0-no, 1-chronology, 2-repeat list, 3-replay
 play_order = 1
 play_screen_on = 30
 screen_on_dur = 60
 next_song = 0
+shuffled = False
 
 def play(filename, name):
   global decoder, repeat, play_order, played_now, start_timer, next_song
   force_quit = False
   gc.collect()
   file = open(filename, "rb")
+  header = file.read(44)
+  data_size = int.from_bytes(header[40:44], 'little')
+  sample_rate = int.from_bytes(header[24:28], 'little')
+  duration_seconds = data_size / (sample_rate * 2)
+  mins=duration_seconds//60
+  sec=duration_seconds%60
+  dur.text = str(int(mins))+":"+str(int(sec))
   if decoder == None:
     decoder = WaveFile(file)
   else:
     decoder.deinit()
     decoder = WaveFile(file)
   audio.play(decoder)
-  # screen.pop(screen.index(play_btn))
-  # screen.append(pause_btn)
   play_btn.bitmap = pause_btn_image
-  if len(name)>= 19:
-    name = name[:16]+"..."
+  name = name.replace("-qm","")
+  name = name.replace(".wav","")
+  if len(name)>= 13:
+    name = name[:9]+"..."
   playing.text = name
   time.sleep(0.5)
   while audio.playing:
@@ -129,7 +146,7 @@ def play(filename, name):
           play_order_btn.bitmap = play_order_image[play_order]
           time.sleep(0.5)
         if controls.get_axis(controls.x_axis) > 0.4:
-          if play_order < 4:
+          if play_order < 3:
             play_order += 1
           play_order_btn.bitmap = play_order_image[play_order]
           time.sleep(0.5)
@@ -154,6 +171,7 @@ def play(filename, name):
       led.value = True
   play_btn.bitmap = play_btn_image
   playing.text = default_notplaying
+  dur.text = "00:00"
   if force_quit == False:
     played_now = True
   else:
@@ -174,16 +192,27 @@ def parse_path(cur, next):
   return "/".join(stack)+"/"
 
 # read list of files
-def read_files():
+def read_files(shuffle=False):
   inlist = os.listdir(root+path)
-  inlist.sort()
-  outlist = os.listdir(root+path)
-  outlist.sort()
+  if shuffle == True:
+    newinlist = []
+    while len(newinlist) < len(inlist):
+      r = random.randint(0, len(inlist)-1)
+      if inlist[r] not in newinlist:
+        newinlist.append(inlist[r])
+    inlist = newinlist
+  else:
+    inlist.sort()
+  outlist = inlist.copy()
   shift = 0
   for i in range(0,len(inlist)):
     text = inlist[i]
     if os.stat(root+path+text)[0] == 16384:
-      outlist[i-shift] = inlist[i] + "/"
+      if shuffle == False:
+        outlist[i-shift] = inlist[i] + "/"
+      else:
+        outlist.pop(i-shift)
+        shift += 1
     elif not (text.endswith(".wav")) :
       outlist.pop(i-shift)
       shift += 1
@@ -197,7 +226,7 @@ files = read_files()
 lastpoy=-1
 poy=1
 chunk=0
-jump_distance=4
+jump_distance=5
 
 def clamp(n, min, max): 
   if n < min: 
@@ -207,12 +236,16 @@ def clamp(n, min, max):
   else:
     return n
 def draw_modal():
+  global chunk
+  if chunk > len(files)-1:
+    chunk = len(files)-1
   dfiles = files[chunk]
   text = ""
   for i in range(0, len(dfiles)):
-    # if i == poy:
-    #   text +="> "
-    text += dfiles[i]+"\n"
+    t = dfiles[i]
+    t = t.replace("-qm","")
+    t = t.replace(".wav","")
+    text += t+"\n"
   del dfiles
   gc.collect()
   modal.text = text
@@ -270,7 +303,7 @@ def draw():
   gc.collect()
 
 def to_dir(loc):
-  global path, files
+  global path, files, cover
   path = parse_path(path, loc)
   files = read_files()
   global lastpoy, chunk, poy
@@ -279,7 +312,14 @@ def to_dir(loc):
   poy = 1
   draw_modal()
   draw_pointer()
-  time.sleep(0.2)
+  try:
+    status = os.stat(root+path+"cover80.bmp")
+    cover = displayio.OnDiskBitmap(root+path+"cover80.bmp")
+    cover_pre.bitmap = cover
+  except OSError:
+    cover = default_cover
+    cover_pre.bitmap = cover
+    gc.collect()
 
 def main():
   screen.append(play_btn)
@@ -288,10 +328,13 @@ def main():
   screen.append(pointer)
   screen.append(modal)
   screen.append(playing)
+  screen.append(dur)
+  screen.append(shuffle_btn)
+  screen.append(cover_pre)
   draw_modal()
-  global played_now, play_order, start_timer, screen_on_dur, files, chunk, poy, audio, next_song
+  global played_now, play_order, start_timer, screen_on_dur, files, chunk, poy, audio, next_song, shuffled
   while True:
-    if played_now and play_order == 4:
+    if played_now and play_order == 3:
       play(root+path+files[chunk][poy], files[chunk][poy])
     elif played_now and (play_order == 1 or play_order == 2):
       if next_song != 0:
@@ -324,8 +367,15 @@ def main():
     time.sleep(1/12)
     if controls.get_btn(controls.btna):
       if display.backlight.value == True:
-        if files[chunk][poy].endswith("/"):
-          #path += files[chunk][poy]
+        if controls.get_btn(controls.btnse):
+          shuffled = not shuffled
+          files = read_files(shuffled)
+          draw_modal()
+          if shuffled:
+            shuffle_btn.bitmap = yes_shuffle
+          else:
+            shuffle_btn.bitmap = no_shuffle
+        elif files[chunk][poy].endswith("/"):
           to_dir(files[chunk][poy])
         elif files[chunk][poy].endswith(".wav"):
           play(root+path+files[chunk][poy], files[chunk][poy])
