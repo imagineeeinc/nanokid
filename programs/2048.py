@@ -1,15 +1,18 @@
 # A 2048 game, use the thumbstick to move the blocks
 # Logic from https://www.geeksforgeeks.org/2048-game-in-python/
-# CHangwe to root varibale to change the location of the bitmaps (if loading from sd, make sure to init)
+# Change to root varibale to change the location of the bitmaps (if loading from sd, make sure to init)
 root = "cyclone/2048"
+# Cahnge bg_c to change the background color
+bg_c = 0xFDCBB0
 
 import random, time
 
-import displayio, terminalio
-from adafruit_display_text import Label
+import displayio
+from adafruit_display_shapes.rect import Rect
 
 from thunder.display import Display
 import thunder.input as controls
+import thunder.sys
 
 display = Display()
 screen = display.screen
@@ -142,30 +145,34 @@ blocks = {
 }
 grid = [
 	[
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*0, y=60*0),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*1, y=60*0),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*2, y=60*0),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*3, y=60*0)
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*0, y=5+60*0),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*1, y=5+60*0),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*2, y=5+60*0),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*3, y=5+60*0)
 	],
 	[
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*0, y=60*1),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*1, y=60*1),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*2, y=60*1),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*3, y=60*1)
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*0, y=5+60*1),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*1, y=5+60*1),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*2, y=5+60*1),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*3, y=5+60*1)
 	],
 	[
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*0, y=60*2),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*1, y=60*2),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*2, y=60*2),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*3, y=60*2)
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*0, y=5+60*2),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*1, y=5+60*2),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*2, y=5+60*2),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*3, y=5+60*2)
 	],
 	[
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*0, y=60*3),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*1, y=60*3),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*2, y=60*3),
-		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=60*3, y=60*3)
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*0, y=5+60*3),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*1, y=5+60*3),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*2, y=5+60*3),
+		displayio.TileGrid(blocks[0], pixel_shader=blocks[2].pixel_shader, x=5+60*3, y=5+60*3)
 	]
 ]
+palette = displayio.Palette(1)
+palette[0] = bg_c
+bg = Rect(0, 0, 240, 240, fill=bg_c)
+screen.append(bg)
 for row in grid:
 	for tile in row:
 		screen.append(tile)
@@ -173,6 +180,10 @@ for i in range(4):
 			row = mat[i]
 			for j in range(4):
 				tile = row[j]
+				if tile == 0:
+					grid[i][j].pixel_shader = palette
+				else:
+					grid[i][j].pixel_shader = blocks[tile].pixel_shader
 				grid[i][j].bitmap = blocks[tile]
 while(True):
 	flag = False
@@ -210,8 +221,10 @@ while(True):
 			row = mat[i]
 			for j in range(4):
 				tile = row[j]
+				if tile == 0:
+					grid[i][j].pixel_shader = palette
+				else:
+					grid[i][j].pixel_shader = blocks[tile].pixel_shader
 				grid[i][j].bitmap = blocks[tile]
 		time.sleep(0.1)
-while True:
-	if controls.get_btn(controls.btnb):
-		break
+thunder.sys.exit_to_shell()
