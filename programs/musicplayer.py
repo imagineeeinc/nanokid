@@ -99,7 +99,7 @@ def play(filename, name):
   duration_seconds = data_size / (sample_rate * 2)
   mins=duration_seconds//60
   sec=duration_seconds%60
-  dur.text = str(int(mins))+":"+str(int(sec))
+  dur.text = str(int(mins))+":"+"{:02d}".format(int(sec))
   if decoder == None:
     decoder = WaveFile(file)
   else:
