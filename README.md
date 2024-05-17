@@ -1,5 +1,5 @@
-<p align="center" width="30%">
-  <img src="./nanokid.png">
+<p align="center">
+  <img src="./nanokid.png" width="30%">
 <p>
 <h1 align="center">NanoKid</h1>
 
