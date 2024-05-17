@@ -1,5 +1,5 @@
 # A scientific calculator
-import board, time
+import board, time, math
 import displayio, terminalio
 from adafruit_display_text import label
 from adafruit_display_shapes.triangle import Triangle
@@ -9,6 +9,7 @@ from digitalio import DigitalInOut, Direction, Pull
 from thunder.display import Display
 from thunder.mount_sd import init_sdcard
 import thunder.input as controls
+import thunder.utils as u
 
 init_sdcard()
 
@@ -21,25 +22,52 @@ led.value = False
 def calc(txt, cur, m):
   last=""
   left = ""
-  for n in txt:
+  braket = 0
+  for loc in range(len(txt)):
+    n = txt[loc]
     if n in "01234567890+-*/.":
       left += n
     if n == "M":
       left += str(m)
     if n == "A":
       left += str(cur)
+    if n == "^":
+      left += "**"
+    if n == "s":
+      if txt[loc+1] == "q":
+        left += "math.sqrt"
+      if txt[loc+1] == "i" and txt[loc+2] == "n":
+        left += "math.sin"
+    if n == "c":
+      if txt[loc+1] == "o" and txt[loc+2] == "s":
+        left += "math.cos"
+    if n == "t":
+      if txt[loc+1] == "a" and txt[loc+2] == "n":
+        left += "math.tan"
+    if n == "e":
+      left += "math.e"
+    if n == "p":
+      if txt[loc+1] == "i":
+        left += "math.pi"
+    if n == "(":
+      braket += 1
+      left += "("
+    if n == ")":
+      braket -= 1
+      left += ")"
+
   return eval(left)
 
 def main():
   global display, controls, led
   btns = [
     ["7", "8", "9", ">c", "Ans", "M", ">m", ">M"],
-    ["4", "5", "6", "*", "/", "^", "sq", "root"],
-    ["1", "2", "3", "+", "-", "sin", "cos", "tan"],
+    ["4", "5", "6", "*", "/", "^", "sq(", ""],
+    ["1", "2", "3", "+", "-", "sin(", "cos(", "tan("],
     ["0", ".", "(", ")", ">=", "^2", ",", "log"],
     ["", "", "", "", "e", "pi", "", ""]
   ]
-  btn = label.Label(terminalio.FONT, text="7 8 9 C A M  =M M+\n4 5 6 * / ^  sq _ro\n1 2 3 + - si co ta\n0 . ( ) = ^2 ,  log\n        e pi",
+  btn = label.Label(terminalio.FONT, text="7 8 9 C A M  =M M+\n4 5 6 * / ^  sq\n1 2 3 + - si co ta\n0 . ( ) = ^2 ,  log\n        e pi",
   color=0xFFFFFF, background_color=0x000000, x=10, y=80, scale = 2)
   display.screen.append(btn)           
   preview = label.Label(terminalio.FONT, text="",
