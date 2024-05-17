@@ -1,4 +1,8 @@
-# NanoKid
+<p align="center" width="30%">
+  <img src="./nanokid.png">
+<p>
+<h1 align="center">NanoKid</h1>
+
 A programmable handheld packed with features to have fun with.
 
 This repo contains All the software and hardware details for the NanoKid handheld.
