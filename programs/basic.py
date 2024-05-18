@@ -1,6 +1,6 @@
 # A rudementry basic lang interpreter
 import time, board, usb_cdc, math, io
-import terminalio
+import terminalio, displayio
 from adafruit_display_text import label
 from collections import OrderedDict
 from digitalio import DigitalInOut, Direction, Pull
@@ -53,8 +53,9 @@ def checkDigit(str):
     except:
       res=False
   return res
+curScreen = 0
 def parse(tree):
-  global code
+  global code, curScreen
   n = 0
   val = 0
   while n <= len(tree)-1:
@@ -138,6 +139,13 @@ def parse(tree):
           temp[l[pos]+int(tree[n+1])] = code[l[pos]]
         code = sort(temp)
         break
+    if i == "screen":
+      if curScreen == 0:
+        curScreen = 1
+        display.display.root_group = displayio.CIRCUITPYTHON_TERMINAL
+      else:
+        curScreen = 0
+        display.display.root_group = display.screen
     if i == "exit":
       val = -1
       break
