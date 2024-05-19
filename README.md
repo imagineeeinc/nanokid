@@ -10,7 +10,7 @@ This repo contains All the software and hardware details for the NanoKid handhel
 ## Showcase
 A showcase a video I made to show some features.
 
-[![Nanokid Cover](https://img.youtube.com/vi/lWHa1n5uhjA/0.jpg)](https://www.youtube.com/watch?v=lWHa1n5uhjA)
+[![Nanokid Cover](https://img.youtube.com/vi/qrYvz0_1nr8/0.jpg)](https://www.youtube.com/watch?v=qrYvz0_1nr8)
 
 ## Contents
 - **Cyclone**: An OS shell like layer that allows you to load programs on the fly.
