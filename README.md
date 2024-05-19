@@ -7,6 +7,11 @@ A programmable handheld packed with features to have fun with.
 
 This repo contains All the software and hardware details for the NanoKid handheld.
 
+## Showcase
+A showcase a video I made to show some features.
+
+[![Nanokid Cover](https://img.youtube.com/vi/lWHa1n5uhjA/0.jpg)](https://www.youtube.com/watch?v=lWHa1n5uhjA)
+
 ## Contents
 - **Cyclone**: An OS shell like layer that allows you to load programs on the fly.
 - **Thunder**: The SDK that abstracts many parts of the hardware with a simple API. (Used by cyclone)
